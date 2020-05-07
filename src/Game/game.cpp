@@ -16,7 +16,7 @@ void Game::Init() {
 
 		Sleep(500);
 	}
-	printf("Client window found!\n");
+	printf("Game window found!\n");
 
 	// get the devide context for the window
 	hdc = GetDC(hwnd);
@@ -31,15 +31,22 @@ void Game::Init() {
 
 void Game::Play() {
 	printf("Waiting for game...\n");
-	Sleep(1000);
+	Sleep(5000);
 
 	while (!IsReady())
 		Sleep(500);
 
 	printf("Game is ready!\n");
+
+	while (Processing::CompareRGB(GetPixel(hdc, 0, 0), 0, 0, 0))
+		Sleep(100);
 }
 
 bool Game::IsReady() {
 	COLORREF color = GetPixel(hdc, 630, 715);
 	return !Processing::CompareRGB(color, 0, 11, 19);
+}
+
+void Game::Click(int rel_x, int rel_y, bool right_click) {
+	Input::Click(rect.right + rel_x, rect.top + rel_y, right_click);
 }
