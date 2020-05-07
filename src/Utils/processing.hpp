@@ -38,4 +38,5 @@ namespace Processing {
 	bool CompareRGB(const COLORREF color, const uint8_t r, const uint8_t g, const uint8_t b);
 	cv::Mat Screenshot(const HDC_t dc);
 	double MatchTemplate(cv::Mat img, const char* const tmpl_fn);
+	void ClosestEnemyMinion(cv::Mat img, int& x, int& y);
 }

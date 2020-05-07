@@ -6,7 +6,6 @@ void Shop::Toggle() {
 }
 
 void Shop::Buy(const char* const item_name) {
-	printf("Buying %s...\n", item_name);
 	// open the shop
 	Toggle();
 	Sleep(100);
@@ -38,5 +37,4 @@ void Shop::Buy(const char* const item_name) {
 
 	// close the shop
 	Toggle();
-	printf("%s bought!\n", item_name);
 }

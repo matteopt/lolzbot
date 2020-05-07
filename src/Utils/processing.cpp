@@ -34,3 +34,14 @@ double Processing::MatchTemplate(cv::Mat img, const char* const tmpl_fn) {
 
 	return maxVal;
 }
+
+void Processing::ClosestEnemyMinion(cv::Mat img, int& x, int& y) {
+	cv::cvtColor(img, img, cv::COLOR_BGRA2BGR);
+	cv::cvtColor(img, img, cv::COLOR_BGR2HSV);
+
+	cv::Mat red_hp_bars;
+	cv::inRange(img, cv::Scalar(0, 139, 208), cv::Scalar(0, 140, 209), red_hp_bars);
+
+	cv::imshow("b", red_hp_bars);
+	cv::waitKey();
+}

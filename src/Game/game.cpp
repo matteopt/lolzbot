@@ -51,10 +51,24 @@ void Game::Play() {
 	side = GetSide();
 	role = Game::Role::TOP;
 
+	// assume playing riven for testing
+	uint8_t lvlup_q[2]{VK_CONTROL, 0x51};
+	Input::Keys(2, lvlup_q);
+
 	Sleep(20000);
-	
-	if (role == Game::Role::TOP && side == Game::Side::BLUE) {
-		MinimapClick(15, 50, true);
+
+	// initial move
+	if (side == Game::Side::BLUE) {
+		if (role == Game::Role::TOP)
+			MinimapClick(15, 50, 1);
+	}
+
+	Sleep(20000);
+
+	while (true) {
+		int x, y;
+		Processing::ClosestEnemyMinion(Processing::Screenshot(gdc), x, y);
+		Sleep(1000);
 	}
 }
 
