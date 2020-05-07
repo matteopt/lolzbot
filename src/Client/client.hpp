@@ -4,6 +4,7 @@
 #include "../Utils/find_hwnd.hpp"
 #include "../Utils/processing.hpp"
 #include "../Utils/input.hpp"
+#include "../Game/game.hpp"
 
 #define LEAGUECLIENT_PATH L"C:\\Games\\Riot Games\\League of Legends\\LeagueClient.exe"
 

@@ -52,6 +52,11 @@ void Client::Play() {
 		Sleep(500);
 
 	printf("Client is ready!\n");
+
+	// todo: create a game queue or w/e
+
+	// debug
+	Game::Init();
 }
 
 bool Client::IsReady() {
