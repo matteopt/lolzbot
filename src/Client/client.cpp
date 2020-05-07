@@ -66,5 +66,5 @@ bool Client::IsReady() {
 }
 
 void Client::Click(int rel_x, int rel_y, bool right_click) {
-	Input::Click(rect.right + rel_x, rect.top + rel_y, right_click);
+	Input::Click(rect.left + rel_x, rect.top + rel_y, right_click);
 }

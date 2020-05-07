@@ -1,6 +1,9 @@
 #pragma once
 #include <Windows.h>
 #include <cstdio>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include "../Utils/find_hwnd.hpp"
 #include "../Utils/processing.hpp"
 #include "../Utils/input.hpp"

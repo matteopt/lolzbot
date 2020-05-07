@@ -6,16 +6,21 @@ void Input::Click(const int abs_x, const int abs_y, const bool right_click) {
 
 	mouse_click.dx = abs_x * (65535 / (float)Common::screen_x);
 	mouse_click.dy = abs_y * (65535 / (float)Common::screen_y);
-	mouse_click.dwFlags = (0x0002 << right_click * 2) | MOUSEEVENTF_MOVE | MOUSEEVENTF_VIRTUALDESK | MOUSEEVENTF_ABSOLUTE;
+	mouse_click.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_VIRTUALDESK | MOUSEEVENTF_ABSOLUTE;
 
 	input.mi = mouse_click;
+	SendInput(1, &input, sizeof(INPUT));
+	Sleep(200);
 
-	INPUT inputs[2];
+	input.mi.dx = 0;
+	input.mi.dy = 0;
 
-	inputs[0] = input;
-	input.mi.dwFlags = (0x0004 << right_click * 2) | MOUSEEVENTF_VIRTUALDESK | MOUSEEVENTF_ABSOLUTE;
-	inputs[1] = input;
-	SendInput(2, inputs, sizeof(input));
+	input.mi.dwFlags = (right_click ? 0x0008 : 0x0002);
+	SendInput(1, &input, sizeof(input));
+	Sleep(200);
+
+	input.mi.dwFlags = (right_click ? 0x0010 : 0x0004);
+	SendInput(1, &input, sizeof(input));
 }
 
 void Input::Keys(const unsigned char n, const uint8_t* const keys) {
