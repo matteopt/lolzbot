@@ -51,6 +51,9 @@ void Game::Play() {
 	side = GetSide();
 	role = Game::Role::TOP;
 
+	// lock camera
+	Input::Key(VK_SPACE);
+
 	// assume playing riven for testing
 	uint8_t lvlup_q[2]{VK_CONTROL, 0x51};
 	Input::Keys(2, lvlup_q);
@@ -70,6 +73,12 @@ void Game::Play() {
 		Processing::ClosestEnemyMinion(Processing::Screenshot(gdc), x, y);
 		Sleep(1000);
 	}
+
+	// release/delete context-related stuff
+	ReleaseDC(hwnd, gdc.hdc);
+	DeleteObject(gdc.hdc);
+	DeleteObject(gdc.hcdc);
+	DeleteObject(gdc.hbmp);
 }
 
 bool Game::IsReady() {

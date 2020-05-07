@@ -57,6 +57,10 @@ void Client::Play() {
 
 	// debug
 	Game::Init();
+
+	// release/delete hdc
+	ReleaseDC(hwnd, hdc);
+	DeleteObject(hdc);
 }
 
 bool Client::IsReady() {
