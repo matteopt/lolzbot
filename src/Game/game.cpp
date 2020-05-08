@@ -17,7 +17,7 @@ void Game::Init() {
 		if (hwnd)
 			GetWindowRect(hwnd, &rect);
 
-		Sleep(500);
+		Sleep(2000);
 	}
 	printf("Game window found!\n");
 
@@ -58,7 +58,7 @@ void Game::Play() {
 	uint8_t lvlup_q[2]{VK_CONTROL, 0x51};
 	Input::Keys(2, lvlup_q);
 
-	Sleep(20000);
+	Sleep(16000);
 
 	// initial move
 	if (side == Game::Side::BLUE) {
@@ -68,10 +68,32 @@ void Game::Play() {
 
 	Sleep(20000);
 
+	for (size_t i = 0; i < 2; i++) {
+		if (side == Game::Side::BLUE)
+			Click(800, 200, 1);
+		Sleep(10000);
+	}
+
+	bool dead = false;
 	while (true) {
-		int x, y;
+		while (Processing::CompareRGB(GetPixel(gdc.hdc, 516, 700), 139, 170, 153)) {
+			dead = true;
+			Sleep(1000);
+		}
+		if (dead) {
+			if (side == Game::Side::BLUE) {
+				if (role == Game::Role::TOP)
+					MinimapClick(15, 50, 1);
+			}
+		}
+		dead = dead ? !dead : dead;
+		
+		int x = -1;
+		int y = -1;
 		Processing::ClosestEnemyMinion(Processing::Screenshot(gdc), x, y);
-		Sleep(1000);
+		if (x > 0)
+			Click(x, y, 0);
+		Sleep(2000 + Common::dmstime(Common::rng));
 	}
 
 	// release/delete context-related stuff

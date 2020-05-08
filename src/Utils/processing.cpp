@@ -42,6 +42,18 @@ void Processing::ClosestEnemyMinion(cv::Mat img, int& x, int& y) {
 	cv::Mat red_hp_bars;
 	cv::inRange(img, cv::Scalar(0, 139, 208), cv::Scalar(0, 140, 209), red_hp_bars);
 
-	cv::imshow("b", red_hp_bars);
-	cv::waitKey();
+	std::vector<std::vector<cv::Point>> contours;
+	std::vector<cv::Vec4i> hierarchy;
+	findContours(red_hp_bars, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+
+	int dist = -1;
+	for (int i = 0; i < contours.size(); i++) {
+		cv::Rect rect = cv::boundingRect(contours.at(i));
+		int cdist = sqrt(pow(640 - rect.x, 2) + pow(360 - rect.y, 2));
+		if (dist < 0 || cdist < dist) {
+			dist = cdist;
+			x = rect.x + 5;
+			y = rect.y + 10;
+		}
+	}
 }
