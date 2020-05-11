@@ -1,5 +1,6 @@
 #pragma once
 #include "processing.hpp"
+#include "../Game/game.hpp"
 
 void Processing::GetRGB(const COLORREF color, uint8_t& r, uint8_t& g, uint8_t& b) {
 	r = GetRValue(color);
@@ -21,7 +22,7 @@ cv::Mat Processing::Screenshot(const HDC_t dc) {
 	return img;
 }
 
-double Processing::MatchTemplate(cv::Mat img, const char* const tmpl_fn) {
+double Processing::MatchTemplate(cv::Mat img, const char* const tmpl_fn, cv::Point* const loc) {
 	cv::cvtColor(img, img, cv::COLOR_BGRA2GRAY);
 
 	cv::Mat tmpl = cv::imread(tmpl_fn, 0);
@@ -30,7 +31,7 @@ double Processing::MatchTemplate(cv::Mat img, const char* const tmpl_fn) {
 	cv::matchTemplate(img, tmpl, score, cv::TM_CCOEFF_NORMED);
 
 	double maxVal;
-	minMaxLoc(score, 0, &maxVal);
+	minMaxLoc(score, NULL, &maxVal, NULL, loc);
 
 	return maxVal;
 }
@@ -56,4 +57,23 @@ void Processing::ClosestEnemyMinion(cv::Mat img, int& x, int& y) {
 			y = rect.y + 10;
 		}
 	}
+}
+
+bool Processing::FindTurret(cv::Mat img, int& x, int& y, Game::Side& enemy) {
+	cv::Point loc;
+	
+	if (Processing::MatchTemplate(img, "rturret.png", &loc) > 0.70) {
+		cv::cvtColor(img, img, cv::COLOR_BGRA2BGR);
+		cv::cvtColor(img, img, cv::COLOR_BGR2HSV);
+		
+		int hue = img.at<cv::Vec3b>(cv::Point(loc.x + 135, loc.y + 9))[0];
+		
+		enemy = static_cast<Game::Side>(hue < 10);
+		x = loc.x + 135;
+		y = loc.y + 12;
+
+		return true;
+	}
+
+	return false;
 }
