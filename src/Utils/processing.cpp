@@ -62,13 +62,16 @@ void Processing::ClosestEnemyMinion(cv::Mat img, int& x, int& y) {
 bool Processing::FindTurret(cv::Mat img, int& x, int& y, Game::Side& enemy) {
 	cv::Point loc;
 	
+	// find outer turret health bar matches (assumed to only be 1 at a time on the screen)
 	if (Processing::MatchTemplate(img, "rturret.png", &loc) > 0.70) {
 		cv::cvtColor(img, img, cv::COLOR_BGRA2BGR);
 		cv::cvtColor(img, img, cv::COLOR_BGR2HSV);
 		
-		int hue = img.at<cv::Vec3b>(cv::Point(loc.x + 135, loc.y + 9))[0];
+		// get health bar color
+		int hue = img.at<cv::Vec3b>(cv::Point(loc.x + 20, loc.y + 9))[0];
 		
 		enemy = static_cast<Game::Side>(hue < 10);
+		// centered health bar coordinates
 		x = loc.x + 135;
 		y = loc.y + 12;
 

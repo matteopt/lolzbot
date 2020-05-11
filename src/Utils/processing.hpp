@@ -41,8 +41,10 @@ namespace Processing {
 
 	void GetRGB(const COLORREF color, uint8_t& r, uint8_t& g, uint8_t& b);
 	bool CompareRGB(const COLORREF color, const uint8_t r, const uint8_t g, const uint8_t b);
+	
 	cv::Mat Screenshot(const HDC_t dc);
 	double MatchTemplate(cv::Mat img, const char* const tmpl_fn, cv::Point* const loc = NULL);
+	
 	void ClosestEnemyMinion(cv::Mat img, int& x, int& y);
 	bool FindTurret(cv::Mat img, int& x, int& y, Game::Side& enemy);
 }
