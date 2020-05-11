@@ -63,7 +63,7 @@ bool Processing::FindTurret(cv::Mat img, int& x, int& y, Game::Side& enemy) {
 	cv::Point loc;
 	
 	// find outer turret health bar matches (assumed to only be 1 at a time on the screen)
-	if (Processing::MatchTemplate(img, "rturret.png", &loc) > 0.70) {
+	if (Processing::MatchTemplate(img, "rturret.png", &loc) > 0.7f) {
 		cv::cvtColor(img, img, cv::COLOR_BGRA2BGR);
 		cv::cvtColor(img, img, cv::COLOR_BGR2HSV);
 		
