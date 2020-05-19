@@ -36,33 +36,61 @@ double Processing::MatchTemplate(cv::Mat img, const char* const tmpl_fn, cv::Poi
 	return maxVal;
 }
 
-void Processing::ClosestEnemyMinion(cv::Mat img, int& x, int& y) {
+std::vector<std::vector<cv::Point>> Processing::MinionHealthBarContours(cv::Mat img, Game::Side side) {
 	cv::cvtColor(img, img, cv::COLOR_BGRA2BGR);
 	cv::cvtColor(img, img, cv::COLOR_BGR2HSV);
 
 	cv::Mat red_hp_bars;
-	cv::inRange(img, cv::Scalar(0, 139, 208), cv::Scalar(0, 140, 209), red_hp_bars);
+	if (side == Game::Side::RED)
+		cv::inRange(img, cv::Scalar(0, 139, 208), cv::Scalar(0, 140, 209), red_hp_bars);
+	// todo: blue hsv range
 
 	std::vector<std::vector<cv::Point>> contours;
 	std::vector<cv::Vec4i> hierarchy;
 	findContours(red_hp_bars, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 
-	int dist = -1;
+	return contours;
+}
+
+template <typename RectOp> bool Processing::MinionLowestComparison(cv::Mat img, int& x, int& y, Game::Side side, RectOp rect_op) {
+	std::vector<std::vector<cv::Point>> contours = Processing::MinionHealthBarContours(img, side);
+	
+	int param = -1;
 	for (int i = 0; i < contours.size(); i++) {
 		cv::Rect rect = cv::boundingRect(contours.at(i));
-		int cdist = sqrt(pow(640 - rect.x, 2) + pow(360 - rect.y, 2));
-		if (dist < 0 || cdist < dist) {
-			dist = cdist;
-			x = rect.x + 5;
-			y = rect.y + 10;
+
+		// height should always be 1 for what we're checking
+		if (rect.height != 1)
+			continue;
+
+		int cparam = rect_op(rect);
+		if (param < 0 || cparam < param) {
+			param = cparam;
+			// centered health bar coordinates (max health is 60x4)
+			x = rect.x + 30;
+			y = rect.y + 2;
 		}
 	}
+
+	// if no minions are found, return false
+	return param > 0;
+}
+
+bool Processing::ClosestMinion(cv::Mat img, int& x, int& y, Game::Side side) {
+	auto dist_comp = [](cv::Rect rect) { return sqrt(pow(640 - rect.x, 2) + pow(360 - rect.y, 2)); };
+	return Processing::MinionLowestComparison(img, x, y, side, dist_comp);
+}
+
+bool Processing::LowestHpMinion(cv::Mat img, int& x, int& y, Game::Side side) {
+	auto hp_comp = [](cv::Rect rect) { return rect.width; };
+	return Processing::MinionLowestComparison(img, x, y, side, hp_comp);
 }
 
 bool Processing::FindTurret(cv::Mat img, int& x, int& y, Game::Side& enemy) {
 	cv::Point loc;
 	
 	// find outer turret health bar matches (assumed to only be 1 at a time on the screen)
+	// the red turret template is used but it doesn't matter as it's read as grayscale
 	if (Processing::MatchTemplate(img, "rturret.png", &loc) > 0.7f) {
 		cv::cvtColor(img, img, cv::COLOR_BGRA2BGR);
 		cv::cvtColor(img, img, cv::COLOR_BGR2HSV);
@@ -70,8 +98,9 @@ bool Processing::FindTurret(cv::Mat img, int& x, int& y, Game::Side& enemy) {
 		// get health bar color
 		int hue = img.at<cv::Vec3b>(cv::Point(loc.x + 20, loc.y + 9))[0];
 		
+		// if hue < 10 it should be a red health bar
 		enemy = static_cast<Game::Side>(hue < 10);
-		// centered health bar coordinates
+		// centered health bar coordinates (template is 270x25)
 		x = loc.x + 135;
 		y = loc.y + 12;
 

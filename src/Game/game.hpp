@@ -28,6 +28,7 @@ namespace Game {
 	extern Processing::HDC_t gdc;
 
 	extern Side side;
+	extern Side enemy_side;
 	extern Role role;
 
 	void Init();

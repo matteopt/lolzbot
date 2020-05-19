@@ -5,6 +5,7 @@ RECT Game::rect;
 Processing::HDC_t Game::gdc;
 
 Game::Side Game::side;
+Game::Side Game::enemy_side;
 Game::Role Game::role;
 
 void Game::Init() {
@@ -49,18 +50,16 @@ void Game::Play() {
 	Sleep(500);
 
 	side = GetSide();
+	enemy_side = static_cast<Game::Side>(!static_cast<bool>(side));
 	role = Game::Role::TOP;
 
 	// lock camera
 	Input::Key(VK_SPACE);
 
 	while (true) {
-		int turret_x, turret_y;
-		Side turret_side;
-		if (Processing::FindTurret(Processing::Screenshot(gdc), turret_x, turret_y, turret_side)) {
-			if (side != turret_side)
-				printf("CLOSE TO ENEMY TURRET!!!\n");
-		}
+		int x, y;
+		if (Processing::LowestHpMinion(Processing::Screenshot(gdc), x, y, enemy_side))
+			Click(x-10, y+35, 1);
 		Sleep(1000);
 	}
 

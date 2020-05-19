@@ -45,6 +45,9 @@ namespace Processing {
 	cv::Mat Screenshot(const HDC_t dc);
 	double MatchTemplate(cv::Mat img, const char* const tmpl_fn, cv::Point* const loc = NULL);
 	
-	void ClosestEnemyMinion(cv::Mat img, int& x, int& y);
+	std::vector<std::vector<cv::Point>> MinionHealthBarContours(cv::Mat img, Game::Side side);
+	template <typename RectOp> bool MinionLowestComparison(cv::Mat img, int& x, int& y, Game::Side side, RectOp rect_op);
+	bool ClosestMinion(cv::Mat img, int& x, int& y, Game::Side side);
+	bool LowestHpMinion(cv::Mat img, int& x, int& y, Game::Side side);
 	bool FindTurret(cv::Mat img, int& x, int& y, Game::Side& enemy);
 }
